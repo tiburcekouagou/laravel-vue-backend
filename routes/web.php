@@ -16,3 +16,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/{link:short_link}', function (\App\Models\Link $link) {
+    $link->view++;
+    $link->save();
+    return redirect($link->full_link, 301);
+});
