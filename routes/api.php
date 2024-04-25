@@ -20,3 +20,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::middleware('auth:sanctum')->apiResource('/links', LinkController::class);
+
+Route::get("/profile/{user}", function (\App\Models\User $user) {
+    $links = $user->links()->select("short_link")->get();
+    return response()->json([
+        "user" => $user,
+        "links" => $links
+    ]);
+});
