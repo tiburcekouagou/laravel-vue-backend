@@ -8,15 +8,20 @@ use App\Models\Link;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class LinkController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $links = Link::where('user_id', Auth::user()->id)->paginate(5);
+        $links = QueryBuilder::for(Link::class)
+            ->allowedFilters(['full_link', 'short_link'])
+            ->allowedSorts(['full_link', 'short_link', 'views', 'id'])
+            ->where('user_id', Auth::user()->id)
+            ->paginate($request->get('perPage', 5));
         return response()->json($links);
     }
 
@@ -34,7 +39,7 @@ class LinkController extends Controller
         $link->save();
         return response()->json($link, 201);
     }
-    
+
     /**
      * Display the specified resource.
      */
